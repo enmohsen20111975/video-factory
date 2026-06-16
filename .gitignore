@@ -5,3 +5,38 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+*/.next
+
+*/__pycache__
+*/migrations
+*/staticfiles
+*/media
+*/.pytest_cache
+*/.mypy_cache
+*/.ruff_cache
+*/.venv
+*/.vscode
+*/.idea
+*/.ipynb_checkpoints
+*/node_modules
+*/env
+.venv
+
+.env
+.env.local
+.env.*.local
+
+# Ignore IDE specific files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Ignore OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

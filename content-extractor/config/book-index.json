@@ -1,0 +1,91 @@
+{
+    "book": "المعاصر فيزياء 3 ثانوي",
+    "subject": "physics",
+    "grade": "3",
+    "term": "1",
+    "chapters": [
+        {
+            "id": "ch-01-current-electricity",
+            "name": "التيار الكهربي وقانون أوم",
+            "lessons": [
+                {
+                    "id": "lesson-01",
+                    "title": "الكميات الفيزيائية الكهربية",
+                    "pages": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "id": "lesson-02",
+                    "title": "شدة التيار الكهربي",
+                    "pages": [
+                        4,
+                        5,
+                        6,
+                        7
+                    ]
+                },
+                {
+                    "id": "lesson-03",
+                    "title": "المقاومة الكهربية",
+                    "pages": [
+                        8,
+                        9,
+                        10
+                    ]
+                },
+                {
+                    "id": "lesson-04",
+                    "title": "قانون أوم",
+                    "pages": [
+                        11,
+                        12,
+                        13,
+                        14
+                    ]
+                },
+                {
+                    "id": "lesson-05",
+                    "title": "تطبيقات قانون أوم",
+                    "pages": [
+                        15,
+                        16,
+                        17
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "ch-02-dc-circuits",
+            "name": "الدوائر الكهربية المستمرة",
+            "lessons": [
+                {
+                    "id": "lesson-06",
+                    "title": "التيار والجهد في الموصلات",
+                    "pages": [
+                        18,
+                        19,
+                        20
+                    ]
+                },
+                {
+                    "id": "lesson-07",
+                    "title": "القواطع المتصلة والتوازية",
+                    "pages": [
+                        21,
+                        22,
+                        23,
+                        24
+                    ]
+                }
+            ]
+        }
+    ],
+    "notes": {
+        "page_offset": 0,
+        "skip_pages": [],
+        "description": "page_offset: add this number to page numbers in 'pages' arrays to get actual PDF page numbers (0-indexed). skip_pages: list of PDF pages to skip (e.g., cover pages, blank pages)."
+    }
+}

@@ -11,3 +11,6 @@ import { enableTailwind } from '@remotion/tailwind-v4';
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
+
+// Default concurrency limit to 4 cores to prevent laptop lockups
+Config.setConcurrency(4);

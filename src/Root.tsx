@@ -1,17 +1,21 @@
 import "./index.css";
 import { Composition } from "remotion";
-import { MyComposition } from "./Composition";
+import { LessonVideo } from "./compositions/LessonVideo";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="MyComp"
-        component={MyComposition}
-        durationInFrames={60}
+        id="LessonVideo"
+        component={LessonVideo}
+        durationInFrames={30 * 75} // 75 seconds * 30fps = 2250 frames
         fps={30}
-        width={1280}
-        height={720}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          title: "قانون أوم وتطبيقاته",
+          topic: "الفيزياء الكهربية - تالتة ثانوي"
+        }}
       />
     </>
   );
