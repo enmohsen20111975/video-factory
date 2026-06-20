@@ -1,0 +1,43 @@
+{
+  "book": {
+    "id": "template-book",
+    "title": "عنوان الكتاب",
+    "subject": "physics",
+    "grade": "3rd-secondary",
+    "publisher": "المعاصر",
+    "source_pdf": "books/template-book.pdf",
+    "total_pages": 0,
+    "cover_image": null,
+    "created_at": "",
+    "updated_at": "",
+    "extraction_status": "pending",
+    "extraction_progress": 0
+  },
+  "units": [
+    {
+      "id": "unit-1",
+      "title": "عنوان الوحدة",
+      "order": 1,
+      "page_start": 1,
+      "page_end": 10,
+      "lessons": [
+        {
+          "id": "lesson-1-1",
+          "title": "عنوان الدرس",
+          "page_start": 1,
+          "page_end": 5,
+          "status": "pending",
+          "lesson_file": "lessons/lesson-1-1.json",
+          "video_status": "not_generated"
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "total_units": 0,
+    "total_lessons": 0,
+    "extracted_lessons": 0,
+    "videos_generated": 0,
+    "videos_pending": 0
+  }
+}

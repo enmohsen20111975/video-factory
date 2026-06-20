@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "book_id": "template-book",
+    "unit_id": "unit-1",
+    "lesson_id": "lesson-1-1",
+    "title": "عنوان الدرس",
+    "subtitle": "",
+    "page_start": 1,
+    "page_end": 5,
+    "subject": "physics",
+    "grade": "3rd-secondary",
+    "duration_minutes": 8,
+    "difficulty": "medium",
+    "created_at": "",
+    "updated_at": ""
+  },
+  "content": {
+    "raw_text": "",
+    "summary": "",
+    "objectives": [],
+    "definitions": [],
+    "formulas": [],
+    "explanations": []
+  },
+  "images": [],
+  "tables": [],
+  "questions": [],
+  "scenes": [
+    { "type": "intro", "duration_sec": 4, "title": "المقدمة" },
+    { "type": "title", "duration_sec": 8, "title": "عنوان الدرس" },
+    { "type": "formula", "duration_sec": 12, "formula_id": null },
+    { "type": "simulator", "duration_sec": 16, "config": {} },
+    { "type": "mindmap", "duration_sec": 15 },
+    { "type": "quiz", "duration_sec": 15, "question_ids": [] },
+    { "type": "outro", "duration_sec": 5 }
+  ],
+  "video": {
+    "status": "not_generated",
+    "script_text": "",
+    "voice": "ar-EG-SalmaNeural",
+    "video_url": null,
+    "thumbnail_url": null,
+    "duration_sec": 75,
+    "rendered_at": null,
+    "render_log": null,
+    "file_size_mb": null
+  },
+  "extraction_meta": {
+    "extracted_at": "",
+    "model": "qwen2-vl:7b",
+    "confidence": 0,
+    "needs_review": true,
+    "review_notes": ""
+  }
+}
