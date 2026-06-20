@@ -77,7 +77,7 @@
 
 ### 4. Content Extractor (`content-extractor/`)
 - **التقنية**: Python + Ollama VLM
-- **النماذج**: qwen2-vl:7b (أساسي), gemma3:4b, qwen2-vl:2b (fallback)
+- **النماذج**: qwen2.5vl:7b (أساسي), llama3.2-vision:11b, gemma3:4b (fallback)
 - **المراحل**:
   1. PDF → صور (150 DPI)
   2. استخراج المحتوى بالـ VLM (صفحة بصفحة)
@@ -126,9 +126,9 @@ pip install -r requirements.txt
 ### 2. تحميل نماذج Ollama
 
 ```bash
-ollama pull qwen2-vl:7b
-ollama pull gemma3:4b      # fallback
-ollama pull qwen2-vl:2b    # fallback
+ollama pull qwen2.5vl:7b
+ollama pull llama3.2-vision:11b      # fallback
+ollama pull gemma3:4b    # fallback
 ```
 
 ### 3. تشغيل النظام
@@ -278,7 +278,7 @@ video-factory/
 ## 🔧 الإعدادات
 
 ### إعدادات VLM
-- **النموذج المفضل**: `qwen2-vl:7b`
+- **النموذج المفضل**: `qwen2.5vl:7b`
 - **Cooldown**: 10 ثواني بين الصفحات
 - **GPU VRAM Limit**: 7GB
 - **Temperature**: 0.1

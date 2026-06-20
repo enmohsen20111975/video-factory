@@ -43,7 +43,7 @@ Usage
     python generate-master.py --book-id "physics-3rd-secondary" \\
         --input "raw-json/" --output "out/" \\
         --book-index "config/book-index.json" \\
-        --model "qwen2-vl:7b" --force
+        --model "qwen2.5vl:7b" --force
 """
 
 from __future__ import annotations
@@ -876,8 +876,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--model", "-m",
-        default="qwen2-vl:7b",
-        help="VLM model name to record in extraction_meta (default: qwen2-vl:7b)",
+        default="qwen2.5vl:7b",
+        help="VLM model name to record in extraction_meta (default: qwen2.5vl:7b)",
     )
     parser.add_argument(
         "--book-title",

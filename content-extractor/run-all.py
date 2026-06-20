@@ -28,7 +28,7 @@ Two invocation modes:
     `content-extractor/temp/`, `raw-json/`, `merged-lessons/`.
 
 Optional flags:
-    --model "qwen2-vl:7b"     Override VLM model
+    --model "qwen2.5vl:7b"     Override VLM model
     --cooldown 10             Cooldown between pages (seconds)
     --skip-convert            Skip stage 1
     --skip-extraction         Skip stage 2
@@ -232,7 +232,7 @@ def main() -> int:
     )
     config = load_pipeline_config()
     vlm_config = config.get("stage_2_vlm_extraction", {})
-    default_model = vlm_config.get("preferred_model", "qwen2-vl:7b")
+    default_model = vlm_config.get("preferred_model", "qwen2.5vl:7b")
     default_cooldown = vlm_config.get("cooldown_seconds", 10)
 
     # Mode A: by book-id (new)

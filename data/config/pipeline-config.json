@@ -18,8 +18,8 @@
     "auto_crop": false
   },
   "stage_2_vlm_extraction": {
-    "preferred_model": "qwen2-vl:7b",
-    "fallback_chain": ["qwen2-vl:7b", "gemma3:4b", "qwen2-vl:2b"],
+    "preferred_model": "qwen2.5vl:7b",
+    "fallback_chain": ["qwen2.5vl:7b", "llama3.2-vision:11b", "gemma3:4b"],
     "cooldown_seconds": 10,
     "vram_limit_mb": 7168,
     "gpu_check_retries": 3,

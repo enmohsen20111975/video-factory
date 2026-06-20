@@ -37,9 +37,10 @@ import { useFetch } from "@/hooks/use-fetch";
 import { useAsyncAction } from "@/hooks/use-async-action";
 
 const VLM_MODELS = [
-  "qwen2-vl:7b",
-  "qwen2-vl:32b",
+  "qwen2.5vl:7b",
+  "qwen2.5vl:32b",
   "llama3.2-vision:11b",
+  "gemma3:4b",
   "minicpm-v:8b",
   "llava:13b",
   "llava:7b",
@@ -70,7 +71,7 @@ export default function SettingsPage() {
   );
 
   const [vlm, setVlm] = React.useState({
-    preferred_model: "qwen2-vl:7b",
+    preferred_model: "qwen2.5vl:7b",
     cooldown_seconds: 10,
     vram_limit_mb: 7168,
     temperature: 0.3,

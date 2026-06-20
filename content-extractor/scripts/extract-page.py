@@ -14,9 +14,9 @@ Safety Protocols (MANDATORY):
 - Graceful error handling (continue on failure)
 
 Usage:
-    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2-vl:7b"
-    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2-vl:7b" --start 1 --end 50
-    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2-vl:7b" --cooldown 15
+    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2.5vl:7b"
+    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2.5vl:7b" --start 1 --end 50
+    python extract-page.py --input "temp/" --output "raw-json/" --model "qwen2.5vl:7b" --cooldown 15
 """
 
 import argparse
@@ -79,7 +79,7 @@ GPU_RETRY_WAIT = _vlm_config.get("gpu_retry_wait_seconds", 30)
 _temp = _vlm_config.get("temperature", 0.1)
 _predict = _vlm_config.get("max_tokens", 2048)
 _ctx = _vlm_config.get("context_window", 4096)
-_fallback_list = _vlm_config.get("fallback_chain", ["qwen2-vl:7b", "gemma3:4b", "qwen2-vl:2b"])
+_fallback_list = _vlm_config.get("fallback_chain", ["qwen2.5vl:7b", "llama3.2-vision:11b", "gemma3:4b"])
 
 MODEL_CHAIN = {}
 for m in _fallback_list:
@@ -87,12 +87,12 @@ for m in _fallback_list:
 
 if not MODEL_CHAIN:
     MODEL_CHAIN = {
-        "qwen2-vl:7b": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 4096},
+        "qwen2.5vl:7b": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 4096},
+        "llama3.2-vision:11b": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 4096},
         "gemma3:4b": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 4096},
-        "qwen2-vl:2b": {"temperature": 0.1, "num_predict": 2048, "num_ctx": 4096},
     }
 
-_pref_model = _vlm_config.get("preferred_model", "qwen2-vl:7b")
+_pref_model = _vlm_config.get("preferred_model", "qwen2.5vl:7b")
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROMPT_PATH = os.path.join(SCRIPT_DIR, "..", "config", "extraction-prompt.txt")
@@ -331,7 +331,7 @@ def try_with_fallback(
 ) -> dict:
     """
     Try extraction with model fallback chain:
-    preferred_model -> gemma3:4b -> qwen2-vl:2b
+    preferred_model -> llama3.2-vision:11b -> gemma3:4b
     """
     # Build fallback chain
     models_to_try = [preferred_model]

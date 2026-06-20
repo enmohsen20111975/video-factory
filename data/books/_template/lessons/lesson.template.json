@@ -47,7 +47,7 @@
   },
   "extraction_meta": {
     "extracted_at": "",
-    "model": "qwen2-vl:7b",
+    "model": "qwen2.5vl:7b",
     "confidence": 0,
     "needs_review": true,
     "review_notes": ""

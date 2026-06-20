@@ -744,6 +744,171 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // ------------------------------------------------------------------
+// Root welcome page (health check + quick links)
+// ------------------------------------------------------------------
+app.get('/', (req, res) => {
+  const booksCount = (books.listBooks() || []).length;
+  const queueState = queue.getQueue();
+  const cfg = config.getConfig();
+  const uptimeSec = Math.floor(process.uptime());
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎬 Smart Video Factory - Backend</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #0B0F19 0%, #1E293B 100%);
+      color: #F8FAFC;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #6366F1, #A855F7, #EC4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .header p { color: #94A3B8; font-size: 1.1rem; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .status-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+    .status-card .label { color: #94A3B8; font-size: 0.9rem; margin-bottom: 8px; }
+    .status-card .value { font-size: 2rem; font-weight: 800; color: #6366F1; }
+    .status-card .value.green { color: #10B981; }
+    .status-card .value.amber { color: #F59E0B; }
+    .info-box {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .info-box h2 {
+      color: #A855F7;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-box p, .info-box li { color: #CBD5E1; line-height: 1.8; }
+    .info-box code {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818CF8;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.9rem;
+    }
+    .info-box a {
+      color: #6366F1;
+      text-decoration: none;
+      border-bottom: 1px dashed;
+    }
+    .info-box a:hover { color: #818CF8; }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .badge.ok { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+    .badge.warn { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+    ul { list-style: none; padding-right: 0; }
+    ul li { padding: 6px 0; }
+    ul li::before { content: '▸ '; color: #6366F1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎬 Smart Video Factory</h1>
+      <p>Backend API Server - v2.0</p>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="label">📚 الكتب</div>
+        <div class="value">${booksCount}</div>
+      </div>
+      <div class="status-card">
+        <div class="label">🎬 في الانتظار</div>
+        <div class="value amber">${queueState.pending_queue?.length || 0}</div>
+      </div>
+      <div class="status-card">
+        <div class="label">⚙️ قيد التنفيذ</div>
+        <div class="value amber">${queueState.active_jobs?.length || 0}</div>
+      </div>
+      <div class="status-card">
+        <div class="label">⏱️ Uptime</div>
+        <div class="value green">${Math.floor(uptimeSec / 60)}m</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <h2>🚀 الخادم يعمل بنجاح</h2>
+      <p>هذا هو خادم الـ API الخلفي. لوحة التحكم الأمامية تعمل على منفذ آخر:</p>
+      <ul style="margin-top: 12px;">
+        <li>🎨 <strong>لوحة التحكم (Frontend)</strong>: <code>http://localhost:3000</code></li>
+        <li>🌐 <strong>API Server</strong>: <code>http://localhost:3001/api/*</code></li>
+        <li>🔌 <strong>WebSocket</strong>: <code>ws://localhost:3001</code></li>
+      </ul>
+      <p style="margin-top: 16px;">
+        <strong>⚠️ ملاحظة:</strong> لو لم تكن لوحة التحكم تعمل، شغلها بأمر:
+        <br>
+        <code style="display: inline-block; margin-top: 8px; padding: 8px 12px;">cd dashboard-app; npm run dev</code>
+      </p>
+    </div>
+
+    <div class="info-box">
+      <h2>📋 روابط API المهمة</h2>
+      <ul>
+        <li><a href="/api/books" target="_blank">GET /api/books</a> - قائمة الكتب</li>
+        <li><a href="/api/config" target="_blank">GET /api/config</a> - الإعدادات</li>
+        <li><a href="/api/system/status" target="_blank">GET /api/system/status</a> - حالة النظام</li>
+        <li><a href="/api/videos/queue" target="_blank">GET /api/videos/queue</a> - قائمة انتظار الفيديو</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      <h2>🤖 نماذج Ollama</h2>
+      <p>النموذج الحالي المُعد: <code>${cfg.stage_2_vlm_extraction?.preferred_model || 'qwen2.5vl:7b'}</code></p>
+      <p style="margin-top: 12px;">لتحميل النماذج الصحيحة (في Terminal منفصل):</p>
+      <ul style="margin-top: 8px;">
+        <li><code>ollama pull qwen2.5vl:7b</code> (الموصى به - الأحدث)</li>
+        <li><code>ollama pull llama3.2-vision:11b</code> (بديل قوي)</li>
+        <li><code>ollama pull gemma3:4b</code> (خفيف - fallback)</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
+  `);
+});
+
+// ------------------------------------------------------------------
 // 404 + error handlers (last)
 // ------------------------------------------------------------------
 app.use((req, res) => {
