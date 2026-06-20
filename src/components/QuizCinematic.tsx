@@ -1,32 +1,63 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
-interface QuizCinematicProps {
+export interface QuizQuestion {
+  id?: string;
+  type?: string;
+  difficulty?: string;
   question?: string;
+  options?: string[];
+  correct_index?: number;
+  answer?: string;
+  explanation?: string;
+  formula_used?: string;
+}
+
+interface QuizCinematicProps {
+  /** Question object from lesson.json (or equivalent). Falls back to a
+   * sample Ohm's law question when nothing is supplied. */
+  question?: QuizQuestion;
+  /** Inline question string - overrides `question.question` */
+  questionText?: string;
   options?: string[];
   correctIndex?: number;
   explanation?: string;
   timerStartFrame?: number;
-  timerDuration?: number; // duration of the timer countdown in frames
+  timerDuration?: number;
 }
 
+const DEFAULT_QUESTION: QuizQuestion = {
+  id: "q-default",
+  type: "mcq",
+  question: "سؤال: مقاومة 6 أوم موصلة ببطارية 12 فولت. احسب التيار الناتج؟",
+  options: ["1 أمبير", "2 أمبير", "3 أمبير", "4 أمبير"],
+  correct_index: 1,
+  explanation: "الحل: طبق قانون أوم I = V ÷ R => I = 12 ÷ 6 = 2 أمبير",
+};
+
 export const QuizCinematic: React.FC<QuizCinematicProps> = ({
-  question = "سؤال: مقاومة 6 أوم موصلة ببطارية 12 فولت. احسب التيار الناتج؟",
-  options = ["1 أمبير", "2 أمبير", "3 أمبير", "4 أمبير"],
-  correctIndex = 1, // "2 أمبير"
-  explanation = "الحل: طبق قانون أوم I = V ÷ R => I = 12 ÷ 6 = 2 أمبير",
+  question,
+  questionText,
+  options,
+  correctIndex,
+  explanation,
   timerStartFrame = 30,
-  timerDuration = 90 // 3 seconds at 30fps
+  timerDuration = 90,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Timer animation
+  const q = question ?? DEFAULT_QUESTION;
+  const qText = questionText ?? q.question ?? DEFAULT_QUESTION.question!;
+  const qOptions = options ?? q.options ?? DEFAULT_QUESTION.options!;
+  const qCorrect = correctIndex ?? q.correct_index ?? DEFAULT_QUESTION.correct_index!;
+  const qExplanation = explanation ?? q.explanation ?? DEFAULT_QUESTION.explanation!;
+
   const timerProgress = interpolate(
     frame,
     [timerStartFrame, timerStartFrame + timerDuration],
     [1, 0],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
   const isTimerFinished = frame >= timerStartFrame + timerDuration;
@@ -46,14 +77,13 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
         width: "100%",
         maxWidth: "680px",
         fontFamily: "'Cairo', sans-serif",
-        boxShadow: "0 20px 45px rgba(0,0,0,0.3)"
+        boxShadow: "0 20px 45px rgba(0,0,0,0.3)",
       }}
     >
       <div style={{ fontSize: "16px", fontWeight: 600, color: "#F59E0B", marginBottom: "10px" }}>
         🧠 اختبر فهمك الآن!
       </div>
 
-      {/* Question */}
       <div
         style={{
           fontSize: "24px",
@@ -61,10 +91,10 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
           color: "#F8FAFC",
           textAlign: "center",
           marginBottom: "25px",
-          lineHeight: "1.6"
+          lineHeight: "1.6",
         }}
       >
-        {question}
+        {qText}
       </div>
 
       {/* Timer Bar */}
@@ -76,7 +106,7 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
           borderRadius: "4px",
           overflow: "hidden",
           marginBottom: "30px",
-          position: "relative"
+          position: "relative",
         }}
       >
         <div
@@ -84,7 +114,7 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
             height: "100%",
             width: `${timerProgress * 100}%`,
             background: timerProgress > 0.3 ? "#3B82F6" : "#EF4444",
-            transition: "width 0.1s linear, background-color 0.3s ease"
+            transition: "width 0.1s linear, background-color 0.3s ease",
           }}
         />
       </div>
@@ -96,33 +126,32 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
           gridTemplateColumns: "1fr 1fr",
           gap: "15px",
           width: "100%",
-          marginBottom: "20px"
+          marginBottom: "20px",
         }}
       >
-        {options.map((opt, index) => {
+        {qOptions.map((opt, index) => {
           const delay = 10 + index * 6;
           const scale = spring({
             frame: frame - delay,
             fps,
-            config: { damping: 12, stiffness: 100 }
+            config: { damping: 12, stiffness: 100 },
           });
-
           if (scale <= 0) return null;
 
-          // styling options based on timing & correctness
           let border = "1px solid rgba(255, 255, 255, 0.1)";
           let bg = "rgba(15, 23, 42, 0.4)";
           let shadow = "";
+          let opacity = 1;
 
           if (isTimerFinished) {
-            if (index === correctIndex) {
+            if (index === qCorrect) {
               border = "2px solid #10B981";
               bg = "rgba(16, 185, 129, 0.15)";
               shadow = "0 0 15px rgba(16, 185, 129, 0.2)";
             } else {
               border = "1px solid rgba(239, 68, 68, 0.2)";
               bg = "rgba(239, 68, 68, 0.05)";
-              opacity: 0.5;
+              opacity = 0.5;
             }
           }
 
@@ -134,13 +163,14 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
                 borderRadius: "12px",
                 border,
                 background: bg,
-                color: isTimerFinished && index === correctIndex ? "#10B981" : "#E2E8F0",
+                color: isTimerFinished && index === qCorrect ? "#10B981" : "#E2E8F0",
                 fontSize: "18px",
                 fontWeight: 600,
                 textAlign: "center",
                 transform: `scale(${scale})`,
                 boxShadow: shadow,
-                transition: "all 0.4s ease"
+                opacity,
+                transition: "all 0.4s ease",
               }}
             >
               {opt}
@@ -162,10 +192,10 @@ export const QuizCinematic: React.FC<QuizCinematicProps> = ({
             fontSize: "15px",
             textAlign: "center",
             marginTop: "10px",
-            animation: "fadeIn 0.5s ease-in-out"
+            animation: "fadeIn 0.5s ease-in-out",
           }}
         >
-          {explanation}
+          {qExplanation}
         </div>
       )}
     </div>

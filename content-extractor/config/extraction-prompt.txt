@@ -1,24 +1,41 @@
-You are an expert Egyptian educational content extractor. You read scanned textbook pages and extract structured educational data.
+You are an expert Egyptian educational content extractor. You read scanned textbook pages and extract structured educational data for the Unified Video Factory system.
 
 Read this page carefully. It is from an Egyptian high school textbook (Thanaweya Amma). Extract the following in JSON format:
 
 {
   "page_number": 45,
-  "page_type": "lesson | exercise | example | summary | empty | unclear",
+  "page_type": "lesson | exercise | example | summary | cover | index | empty",
+  "lesson_id": "lesson-1-1",
   "lesson_title": "Title if present, else null",
   "lesson_subtitle": "Sub-topic if present, else null",
+  "unit_id": "unit-1",
+  "unit_title": "Unit title if visible on page (header/footer), else null",
   "content_summary": "Brief summary of what this page contains (2-3 sentences in Arabic)",
 
   "definitions": [
-    {"term": "الشحنة الكهربية", "definition": "..."}
+    {
+      "id": "def-001",
+      "term": "الشحنة الكهربية",
+      "definition": "..."
+    }
   ],
 
   "formulas": [
-    {"formula_latex": "I = \\frac{Q}{t}", "description": "شدة التيار = الشحنة ÷ الزمن", "variables": [{"symbol": "I", "meaning": "شدة التيار", "unit": "أمبير"}]}
+    {
+      "id": "form-001",
+      "latex": "I = \\frac{Q}{t}",
+      "description": "شدة التيار = الشحنة ÷ الزمن",
+      "variables": [
+        {"symbol": "I", "meaning": "شدة التيار", "unit": "أمبير"},
+        {"symbol": "Q", "meaning": "الشحنة الكهربية", "unit": "كولوم"},
+        {"symbol": "t", "meaning": "الزمن", "unit": "ثانية"}
+      ]
+    }
   ],
 
   "examples": [
     {
+      "id": "ex-001",
       "question": "Example problem text...",
       "solution_steps": ["Step 1...", "Step 2..."],
       "final_answer": "6 A",
@@ -28,18 +45,37 @@ Read this page carefully. It is from an Egyptian high school textbook (Thanaweya
 
   "exercises": [
     {
+      "id": "q-001",
+      "type": "mcq | numerical | conceptual | true_false",
+      "difficulty": "easy | medium | hard",
       "question": "Exercise text...",
-      "answer": "Answer if visible",
-      "type": "mcq | numerical | conceptual | true_false"
+      "options": ["option A", "option B", "option C", "option D"],
+      "correct_index": 2,
+      "answer": "Answer if visible (for numerical/conceptual/true_false)",
+      "explanation": "Solution explanation if visible",
+      "formula_used": "I = V/R"
     }
   ],
 
   "tables": [
-    {"description": "Table comparing DC and AC", "headers": ["DC", "AC"], "rows": 3}
+    {
+      "id": "tbl-001",
+      "title": "Optional table title",
+      "description": "What the table shows",
+      "headers": ["الكمية", "الرمز", "الوحدة"],
+      "rows": [
+        ["الجهد", "V", "فولت"],
+        ["التيار", "I", "أمبير"]
+      ]
+    }
   ],
 
   "figures": [
-    {"description": "Circuit diagram with battery and resistor", "type": "circuit | graph | diagram"}
+    {
+      "id": "fig-001",
+      "description": "Circuit diagram with battery and resistor",
+      "type": "circuit | graph | diagram | photo | illustration | table_image"
+    }
   ],
 
   "key_points": ["Point 1", "Point 2"],
@@ -51,11 +87,52 @@ Read this page carefully. It is from an Egyptian high school textbook (Thanaweya
 }
 
 Rules:
-1. Write formulas in LaTeX format between $...$ or as raw LaTeX: \frac{Q}{t}
-2. Use formal Arabic (فصحى) for raw_text, but note where colloquial explanations exist
-3. If page is empty or unreadable, return page_type: "empty" or "unclear"
-4. Do NOT invent content. If unsure, mark confidence below 0.5 and explain in notes
-5. Always include units (V, A, Ω, C, s) with every numerical value
-6. If an example is solved step-by-step in the book, extract ALL steps
-7. Return ONLY valid JSON, no markdown formatting or code blocks around it
-8. Ensure all Arabic text is properly encoded in UTF-8
+1. IDENTIFY LESSON & UNIT BOUNDARIES:
+   - If this page starts a new lesson (has a clear lesson title at the top), set page_type to "lesson" and provide a fresh lesson_id like "lesson-1-1" (format: lesson-<unit>-<lesson-in-unit>).
+   - If this page is a continuation of the same lesson (no new lesson title), KEEP the same lesson_id and lesson_title as the previous page.
+   - If a new unit/chapter starts on this page, set unit_id like "unit-1" and provide unit_title.
+   - For exercise/summary pages, KEEP the same lesson_id of the lesson they belong to.
+   - Cover pages → page_type "cover"; index/table-of-contents → "index".
+
+2. WRITE FORMULAS IN LATEX:
+   - Use raw LaTeX: \frac{Q}{t}, V = I \times R, E = mc^2
+   - Include ALL variables with their Arabic meaning and unit.
+   - Provide a short Arabic description for each formula.
+
+3. ID GENERATION:
+   - Use 3-digit padded sequential ids within the page: def-001, form-001, ex-001, q-001, tbl-001, fig-001.
+   - ids must be unique within the page.
+
+4. EXERCISES:
+   - For MCQ: include "options" array (2-4 options) and "correct_index" (0-based).
+   - For numerical: include "answer" (string with unit).
+   - For true_false: include "answer" of "true" or "false".
+   - For conceptual: include "answer" (short text) or null if not visible.
+   - Always set "type" to one of: mcq, numerical, conceptual, true_false.
+
+5. TABLES:
+   - Extract actual row data as arrays of strings (not just row counts).
+   - "headers" is an array of column titles (strings).
+   - "rows" is an array of arrays, each inner array representing one row's cell values.
+
+6. FIGURES:
+   - "type" should be one of: circuit, graph, diagram, photo, illustration, table_image.
+   - Describe the figure in Arabic so it can be used as alt-text / caption.
+
+7. USE FORMAL ARABIC (فصحى) for raw_text, but note where colloquial explanations exist.
+
+8. EMPTY/UNCLEAR PAGES:
+   - If page is blank → page_type: "empty", confidence < 0.3.
+   - If page is unreadable → page_type: "empty", confidence < 0.5, explain in notes.
+
+9. DO NOT INVENT CONTENT. If unsure, mark confidence below 0.5 and explain in notes.
+
+10. Always include units (V, A, Ω, C, s, J, W, N) with every numerical value.
+
+11. If an example is solved step-by-step in the book, extract ALL steps in solution_steps array.
+
+12. Return ONLY valid JSON, no markdown formatting or code blocks around it.
+
+13. Ensure all Arabic text is properly encoded in UTF-8.
+
+14. The lesson_id and unit_id are SUGGESTED values — the merge step may override them based on book index. Just give your best guess based on visible chapter/lesson structure.

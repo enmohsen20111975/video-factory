@@ -37,7 +37,12 @@
     "lint": "eslint src && tsc",
     "dashboard": "node dashboard-server.js",
     "dashboard:dev": "node --watch dashboard-server.js",
-    "dashboard:old": "node dashboard.js"
+    "dashboard:old": "node dashboard.js",
+    "render-lesson": "node scripts/render-video.js",
+    "queue-worker": "node scripts/queue-worker.js",
+    "generate-script": "python scripts/generate-script.py",
+    "export-education": "node scripts/export-education.js",
+    "typecheck": "tsc --noEmit"
   },
   "sideEffects": [
     "*.css"

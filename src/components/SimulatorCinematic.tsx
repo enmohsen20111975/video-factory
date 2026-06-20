@@ -1,7 +1,7 @@
 import React from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
-interface SimulatorCinematicProps {
+export interface SimulatorConfig {
   voltage?: number;
   resistance?: number;
   voltageEnd?: number;
@@ -10,28 +10,49 @@ interface SimulatorCinematicProps {
   animationEndFrame?: number;
 }
 
+interface SimulatorCinematicProps extends SimulatorConfig {
+  /** Lesson scene config object - the simulator accepts the same fields at
+   * the top level for backwards-compatibility with the existing call sites. */
+  config?: SimulatorConfig;
+  /** Optional title shown above the simulator */
+  title?: string;
+}
+
 export const SimulatorCinematic: React.FC<SimulatorCinematicProps> = ({
-  voltage = 9,
-  resistance = 3,
-  voltageEnd = 12,
-  resistanceEnd = 3,
-  animationStartFrame = 30,
-  animationEndFrame = 120
+  voltage,
+  resistance,
+  voltageEnd,
+  resistanceEnd,
+  animationStartFrame,
+  animationEndFrame,
+  config,
+  title,
 }) => {
+  // Merge top-level props with the `config` object (config takes precedence
+  // when explicitly set by the caller).
+  const cfg: Required<SimulatorConfig> = {
+    voltage: config?.voltage ?? voltage ?? 9,
+    resistance: config?.resistance ?? resistance ?? 3,
+    voltageEnd: config?.voltageEnd ?? voltageEnd ?? 12,
+    resistanceEnd: config?.resistanceEnd ?? resistanceEnd ?? 3,
+    animationStartFrame: config?.animationStartFrame ?? animationStartFrame ?? 30,
+    animationEndFrame: config?.animationEndFrame ?? animationEndFrame ?? 120,
+  };
+
   const frame = useCurrentFrame();
 
   // Interpolate voltage and resistance over time
   const currentVoltage = interpolate(
     frame,
-    [animationStartFrame, animationEndFrame],
-    [voltage, voltageEnd],
+    [cfg.animationStartFrame, cfg.animationEndFrame],
+    [cfg.voltage, cfg.voltageEnd],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
   const currentResistance = interpolate(
     frame,
-    [animationStartFrame, animationEndFrame],
-    [resistance, resistanceEnd],
+    [cfg.animationStartFrame, cfg.animationEndFrame],
+    [cfg.resistance, cfg.resistanceEnd],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
@@ -64,7 +85,7 @@ export const SimulatorCinematic: React.FC<SimulatorCinematicProps> = ({
       }}
     >
       <div style={{ fontSize: "22px", fontWeight: 700, marginBottom: "20px", color: "#F8FAFC" }}>
-        🔌 محاكي الدائرة الكهربية الافتراضية
+        🔌 {title ?? "محاكي الدائرة الكهربية الافتراضية"}
       </div>
 
       <div style={{ display: "flex", width: "100%", gap: "30px", alignItems: "center" }}>
